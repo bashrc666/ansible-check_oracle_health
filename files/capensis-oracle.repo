@@ -1,0 +1,5 @@
+[Capensis-Oracle]
+name=Capensis Oracle rpm
+baseurl=http://172.16.0.16/pulp/repos/capensis-oracle/
+enabled=1
+gpgcheck=0

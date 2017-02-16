@@ -1,0 +1,12 @@
+oracle_deps:
+  - oracle-instantclient12.1-basic
+  - oracle-instantclient12.1-sqlplus
+  - oracle-instantclient12.1-devel
+  - oracle-instantclient12.1-jdbc
+  - libdbi-drivers
+  - libdbi
+  - perl-DBI
+  - cpan
+  - make
+  - gcc
+  - perl-App-cpanminus

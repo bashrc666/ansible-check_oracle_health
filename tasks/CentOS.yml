@@ -1,0 +1,11 @@
+- name: Add Capensis Oracle Repo
+  copy:
+    src: files/capensis-oracle.repo
+    dest: /etc/yum.repos.d/
+
+- name: Install needed package
+  yum:
+    name: "{{ item }}"
+    state: present
+    disable_gpg_check: yes
+  with_items: "{{ oracle_deps }}"

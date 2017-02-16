@@ -1,0 +1,8 @@
+create user {{ oracle_monitoring_user }} identified by {{ oracle_monitoring_passwd }};
+grant select any dictionary to {{ oracle_monitoring_user }};
+grant select on V_$SYSSTAT to {{ oracle_monitoring_user }};
+grant select on V_$INSTANCE to {{ oracle_monitoring_user }};
+grant select on V_$LOG to {{ oracle_monitoring_user }};
+grant select on SYS.DBA_DATA_FILES to {{ oracle_monitoring_user }};
+grant select on SYS.DBA_FREE_SPACE to {{ oracle_monitoring_user }};
+exit;

@@ -1,0 +1,42 @@
+---
+# tasks file for ansible-check_oracle_health
+- include_vars: "{{ ansible_distribution }}.yml"
+- include: "{{ ansible_distribution }}.yml"
+
+- name: Fetch oracle_health script
+  get_url:
+    url: "{{ oracle_health_repo }}"
+    dest: /tmp/
+
+- name: Untar oracle health
+  unarchive:
+    src: "/tmp/{{ oracle_health_name }}.tar.gz"
+    dest: "{{nagios_nrpe_server_plugins_dir}}"
+    remote_src: True
+
+- name: Create SQL monitoring file
+  template:
+    src: oracle_monitoring.j2
+    dest: /tmp/oracle_monitoring.sql
+
+- name: Import SQL monitoring file
+  shell: sqlplus / as sysdba @/tmp/oracle_monitoring.sql
+
+- name: Install from cpan DBD::Oracle
+  cpanm:
+    name: DBD::Oracle
+    system_lib: yes
+
+- name: Running ./configure for "{{ oracle_health_name }}"
+  command: '"{{ item }}" chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
+  with_items:
+    - ./configure
+
+- name: Running "make" for "{{ oracle_health_name }}"
+  command: '"{{ item }}" chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
+  with_items:
+    - make
+
+
+- name: Running "make install" for "{{ oracle_health_name }}"
+  command: 'make install chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
