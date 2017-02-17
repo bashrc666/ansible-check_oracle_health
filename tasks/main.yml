@@ -51,7 +51,7 @@
 
 - name: Add env var to NRPE
   lineinfile:
-    dest: /tmp/ansible.tmp
+    dest: /etc/sysconfig/nrpe
     line: "{{ oracle_env['stdout'] | replace('export ', '') }}"
     state: present
 
