@@ -63,3 +63,4 @@
   user:
     name: nrpe
     group: oinstall
+    append: yes
