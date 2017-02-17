@@ -33,18 +33,6 @@ Including an example of how to use your role (for instance, with variables passe
 
 # TODO
 
-```
-chmod 664 /oracle/app/oracle/product/12.1.0/dbhome_1/network/admin/tnsnames.ora
-
-[root@oracle12c ~]# cat /etc/sysconfig/nrpe 
-# specify additional command line arguments for nrpe
-NRPE_SSL_OPT=""
-ORACLE_BASE=/oracle/app/oracle
-ORACLE_HOME=/oracle/app/oracle/product/12.1.0/dbhome_1
-PATH=/oracle/app/oracle/product/12.1.0/dbhome_1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-LD_LIBRARY_PATH=/oracle/app/oracle/product/12.1.0/dbhome_1/lib:/lib:/usr/lib:/usr/lib64
-CLASSPATH=/oracle/app/oracle/product/12.1.0/dbhome_1/jlib:/oracle/app/oracle/product/12.1.0/dbhome_1/rdbms/jlib
-```
 
 License
 -------

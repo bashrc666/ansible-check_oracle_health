@@ -1,7 +1,7 @@
 ---
 # tasks file for ansible-check_oracle_health
 - include_vars: "{{ ansible_distribution }}.yml"
-- include: "{{ ansible_distribution }}.yml"
+- include: "{{ ansible_os_family }}.yml"
 
 - name: Fetch oracle_health script
   get_url:
@@ -37,6 +37,29 @@
   with_items:
     - make
 
-
 - name: Running "make install" for "{{ oracle_health_name }}"
   command: 'make install chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
+
+- name: Get var from oracle user
+  slurp:
+    src: "{{ oracle_env_path }}"
+  register: profile
+
+- name: Define oracle env var
+  shell: echo -e "{{ profile['content'] | b64decode }}"
+  register: oracle_env
+
+- name: Add env var to NRPE
+  lineinfile:
+    dest: /tmp/ansible.tmp
+    line: "{{ oracle_env['stdout'] | replace('export ', '') }}"
+    state: present
+
+- name: Register var ORACLE_HOME
+  shell: source "{{ oracle_env_path }}" && echo $ORACLE_HOME
+  register: oracle_home
+
+- name: Add nrpe to oinstall group
+  user:
+    name: nrpe
+    group: oinstall
