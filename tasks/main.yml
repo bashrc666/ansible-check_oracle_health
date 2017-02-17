@@ -40,6 +40,14 @@
 - name: Running "make install" for "{{ oracle_health_name }}"
   command: 'make install chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
 
+- name: Create symlink for check_oracle_health
+  file:
+    src: "{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}/plugins-scripts/check_oracle_health"
+    dest: "{{nagios_nrpe_server_plugins_dir}}/"
+    state: link
+    group: nrpe
+    owner: nrpe
+
 - name: Get var from oracle user
   slurp:
     src: "{{ oracle_env_path }}"
