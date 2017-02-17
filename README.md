@@ -1,4 +1,6 @@
-Role Name
+[![Build Status](https://travis-ci.org/bashrc666/ansible-check_oracle_health.svg?branch=master)](https://travis-ci.org/bashrc666/ansible-check_oracle_health)
+
+Ansible-check_oracle_health
 =========
 
 A brief description of the role goes here.
