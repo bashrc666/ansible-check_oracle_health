@@ -3,38 +3,57 @@
 Ansible-check_oracle_health
 =========
 
-A brief description of the role goes here.
+This role is used to deploy the check_oracle_health script for nrpe monitoring
 
 Requirements
 ------------
 
-epel-release
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+ - Ansible >= 1.9
+ - `epel-release` on remote server
+ - `Oracle12c` on remote server
+ - `CentOS 7` on remote server
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```
+oracle_monitoring_user: C##nagios
+oracle_monitoring_passwd: supervision
+oracle_health_name: check_oracle_health-3.0.1
+oracle_health_repo: "https://labs.consol.de/assets/downloads/nagios/{{ oracle_health_name}}.tar.gz"
+oracle_env_path: /home/oracle/.profile
+```
 
 Dependencies
 ------------
 
-Ensure Oracle env vars are set for root !
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+ - ansible-nagios-nrpe-server
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-# TODO
-
+```
+- hosts: oracle12c
+  roles:
+    - nrpe-server
+    - ansible-check_oracle_health
+  vars:
+    nagios_nrpe_server_plugins_dir: /usr/lib64/nagios/plugins
+    nagios_nrpe_server_allowed_hosts: ["X.X.X.X"]
+    nagios_nrpe_command:
+      oracle_tnsping:
+        script: check_oracle_health
+        option: --mode --connect $ARG1$ --username $ARG2$ --password $ARG3$ tnsping
+      oracle_connection-time:
+        script: check_oracle_health
+        option: --connect $ARG1$ --username $ARG2$ --password $ARG3$ --mode connection-time
+      oracle_sga-data-buffer-hit:
+        script: check_oracle_health
+        option: --connect $ARG1$ --username $ARG2$ --password $ARG3$ --mode sga-data-buffer-hit-ratio
+    oracle_monitoring_user: C##nagios
+    oracle_monitoring_passwd: supervision
+    nagios_nrpe_server_dont_blame_nrpe: 1
+```
 
 License
 -------
@@ -44,4 +63,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Gregory O'Toole / Capensis
