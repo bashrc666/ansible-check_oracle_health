@@ -73,15 +73,10 @@
   shell: echo -e "{{ profile['content'] | b64decode }}"
   register: oracle_env
 
-- name: Add env var to NRPE
-  lineinfile:
+- name: Add environement file to NRPE
+  template:
+    src: nrpe_env.j2
     dest: /etc/sysconfig/nrpe
-    line: "{{ oracle_env['stdout'] | replace('export ', '') }}"
-    state: present
-
-- name: Register var ORACLE_HOME
-  shell: source "{{ oracle_env_path }}" && echo $ORACLE_HOME
-  register: oracle_home
 
 - name: Add nrpe to oinstall group
   user:

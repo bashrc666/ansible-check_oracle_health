@@ -1,0 +1,5 @@
+NRPE_SSL_OPT={{ nrpe_ssl_opt }}
+{% set list_env = oracle_env.stdout.split('\\n') %}
+{%  for value in list_env %}
+{{ value | replace('export ', '') }}
+{% endfor %}
