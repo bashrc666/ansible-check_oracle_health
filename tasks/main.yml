@@ -26,14 +26,14 @@
   when: not check_is_installed.stat.exists
 
 - name: Create SQL monitoring file
-  become: yes
-  become_user: oracle
-  become_method: su
   template:
     src: oracle_monitoring.j2
     dest: /tmp/oracle_monitoring.sql
 
 - name: Import SQL monitoring file
+  become: yes
+  become_user: oracle
+  become_method: su
   shell: sqlplus / as sysdba @/tmp/oracle_monitoring.sql
 
 - name: Install from cpan DBD::Oracle
