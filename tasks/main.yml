@@ -23,9 +23,12 @@
     src: "/tmp/{{ oracle_health_name }}.tar.gz"
     dest: "{{nagios_nrpe_server_plugins_dir}}"
     remote_src: True
-  when: not "{{ check_is_installed.stat.exists }}"
+  when: not check_is_installed.stat.exists
 
 - name: Create SQL monitoring file
+  become: yes
+  become_user: oracle
+  become_method: su
   template:
     src: oracle_monitoring.j2
     dest: /tmp/oracle_monitoring.sql
@@ -37,32 +40,31 @@
   cpanm:
     name: DBD::Oracle
     system_lib: yes
-  when: not "{{ oracle_perl_module.stat.exists }}"
+  when: not oracle_perl_module.stat.exists
 
 - name: Running ./configure for "{{ oracle_health_name }}"
   command: '"{{ item }}" chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
   with_items:
     - ./configure
-  when: not "{{ check_is_installed.stat.exists }}"
+  when: not check_is_installed.stat.exists
 
 - name: Running "make" for "{{ oracle_health_name }}"
   command: '"{{ item }}" chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
   with_items:
     - make
-  when: not "{{ check_is_installed.stat.exists }}"
+  when: not check_is_installed.stat.exists
 
 - name: Running "make install" for "{{ oracle_health_name }}"
   command: 'make install chdir="{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"'
-  when: not "{{ check_is_installed.stat.exists }}"
+  when: not check_is_installed.stat.exists
 
 - name: Create symlink for check_oracle_health
   file:
     src: "{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}/plugins-scripts/check_oracle_health"
-    dest: "{{nagios_nrpe_server_plugins_dir}}/"
+    dest: "{{nagios_nrpe_server_plugins_dir}}/check_oracle_health"
     state: link
     group: nrpe
     owner: nrpe
-  when: not "{{ check_is_installed.stat.exists }}"
 
 - name: Get var from oracle user
   slurp:
@@ -81,5 +83,5 @@
 - name: Add nrpe to oinstall group
   user:
     name: nrpe
-    group: oinstall
+    groups: oinstall
     append: yes
