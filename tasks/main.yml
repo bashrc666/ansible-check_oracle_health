@@ -1,7 +1,14 @@
 ---
 # tasks file for ansible-check_oracle_health
-- include_vars: "{{ ansible_distribution }}.yml"
+- include_vars: "{{ ansible_os_family }}.yml"
 - include: "{{ ansible_os_family }}.yml"
+
+- name: Add environement var [Check_oracle_health]
+  lineinfile:
+    dest: "{{ check_oracle_health_env_path }}"
+    line: "{{ item }}"
+  with_items: "{{ check_oracle_health_env_oracle }}"
+  when: not check_oracle_health_over_nrpe
 
 - name: Fetch oracle_health script
   get_url:
@@ -15,7 +22,7 @@
 
 - name: Check if Check_oracle_health is installed
   stat:
-    path: "{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}"
+    path: "{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}/plugins-scripts/check_oracle_health"
   register: check_is_installed
 
 - name: Untar oracle health
@@ -29,12 +36,14 @@
   template:
     src: oracle_monitoring.j2
     dest: /tmp/oracle_monitoring.sql
+  when: check_oracle_health_over_nrpe 
 
 - name: Import SQL monitoring file
   become: yes
   become_user: oracle
   become_method: su
   shell: sqlplus / as sysdba @/tmp/oracle_monitoring.sql
+  when: check_oracle_health_over_nrpe 
 
 - name: Install from cpan DBD::Oracle
   cpanm:
@@ -63,25 +72,29 @@
     src: "{{nagios_nrpe_server_plugins_dir}}/{{ oracle_health_name }}/plugins-scripts/check_oracle_health"
     dest: "{{nagios_nrpe_server_plugins_dir}}/check_oracle_health"
     state: link
-    group: nrpe
-    owner: nrpe
+    group: "{{ check_oracle_health_system_group }}"
+    owner: "{{ check_oracle_health_system_owner }}"
 
 - name: Get var from oracle user
   slurp:
     src: "{{ oracle_env_path }}"
   register: profile
+  when: check_oracle_health_over_nrpe 
 
 - name: Define oracle env var
   shell: echo -e "{{ profile['content'] | b64decode }}"
   register: oracle_env
+  when: check_oracle_health_over_nrpe 
 
 - name: Add environement file to NRPE
   template:
     src: nrpe_env.j2
     dest: /etc/sysconfig/nrpe
+  when: check_oracle_health_over_nrpe 
 
 - name: Add nrpe to oinstall group
   user:
     name: nrpe
     groups: oinstall
     append: yes
+  when: check_oracle_health_over_nrpe 
