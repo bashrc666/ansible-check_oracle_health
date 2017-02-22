@@ -1,30 +1,32 @@
 ---
-language: python
-python: "2.7"
+services: docker
 
-# Use the new container infrastructure
-sudo: false
+env:
+  - distro: centos7
+    init: /usr/lib/systemd/systemd
+    run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    playbook: test.yml
 
-# Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
+services:
+  - docker
 
-install:
-  # Install ansible
-  - pip install ansible
-
-  # Check ansible version
-  - ansible --version
-
-  # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../' >ansible.cfg
+before_install:
+  # Pull container
+  - 'docker pull docker pull ansible/centos7-ansible'
 
 script:
-  # Basic role syntax check
-  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
-  - ansible-playbook tests/test.yml -i tests/inventory
+  - container_id=$(mktemp)
+  # Run container in detached state.
+  - 'docker run --detach --volume="${PWD}":/etc/ansible/roles/role_under_test:ro ${run_opts} ansible/centos7-ansible "${init}" > "${container_id}"'
+
+  # Ansible syntax check.
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/tests/${playbook} --syntax-check'
+
+  # Test role.
+  - 'docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/role_under_test/tests/${playbook}'
+
+after_failure:
+  # Check check_oracle_health settings.
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
