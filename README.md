@@ -9,50 +9,68 @@ Requirements
 ------------
 
  - Ansible >= 1.9
- - `epel-release` on remote server
- - `Oracle12c` on remote server
- - `CentOS 7` on remote server
+ - epel-release
+ - CentOS 7
 
 Role Variables
 --------------
 
 ```
-oracle_monitoring_user: C##nagios
-oracle_monitoring_passwd: supervision
+# defaults file for ansible-check_oracle_health
+nagios_nrpe_server_plugins_dir: /usr/lib64/nagios/plugins/
 oracle_health_name: check_oracle_health-3.0.1
 oracle_health_repo: "https://labs.consol.de/assets/downloads/nagios/{{ oracle_health_name}}.tar.gz"
 oracle_env_path: /home/oracle/.profile
+nrpe_ssl_opt: ""
+check_oracle_health_system_group: nagios
+check_oracle_health_system_owner: nagios
+check_oracle_health_env_oracle:
+  - "export ORACLE_HOME=/usr/lib/oracle/12.1/client64/lib"
+  - "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/oracle/12.1/client64/lib/"
+  - "export PATH=$PATH:/usr/lib/oracle/12.1/client64/bin"
+# Provide check_oracle_health_over_nrpe to true if you want to install as a nrpe check
+check_oracle_health_over_nrpe: false
+check_oracle_health_env_path: /root/.bashrc
 ```
 
 Dependencies
 ------------
 
- - ansible-nagios-nrpe-server
+Depence of wich case of install you want:
+ - with nrpe on oracle server:
+  - add role nagios-nrpe-server
+  - set `check_oracle_health_over_nrpe: true`
+  - overide default vars to your case
+ 
+ - remote install:
+  - None
+  
 
 Example Playbook
 ----------------
 
+Simple and remote install:
+
 ```
-- hosts: oracle12c
+- hosts: monitoring
   roles:
-    - nrpe-server
     - ansible-check_oracle_health
   vars:
-    nagios_nrpe_server_plugins_dir: /usr/lib64/nagios/plugins
-    nagios_nrpe_server_allowed_hosts: ["X.X.X.X"]
-    nagios_nrpe_command:
-      oracle_tnsping:
-        script: check_oracle_health
-        option: --mode --connect $ARG1$ --username $ARG2$ --password $ARG3$ tnsping
-      oracle_connection-time:
-        script: check_oracle_health
-        option: --connect $ARG1$ --username $ARG2$ --password $ARG3$ --mode connection-time
-      oracle_sga-data-buffer-hit:
-        script: check_oracle_health
-        option: --connect $ARG1$ --username $ARG2$ --password $ARG3$ --mode sga-data-buffer-hit-ratio
-    oracle_monitoring_user: C##nagios
-    oracle_monitoring_passwd: supervision
-    nagios_nrpe_server_dont_blame_nrpe: 1
+    # override default vars to your case
+```
+
+Remote install on oracle server:
+
+```
+- hosts: monitoring
+  roles:
+    - ansible-check_oracle_health
+  vars:
+    check_oracle_health_over_nrpe: true
+    nagios_nrpe_server_plugins_dir: /usr/lib64/nagios/plugins/
+    check_oracle_health_system_group: nagios
+    check_oracle_health_system_owner: nagios
+    check_oracle_health_env_path: /home/oracle/.profile
 ```
 
 License
