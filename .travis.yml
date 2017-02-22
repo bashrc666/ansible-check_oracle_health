@@ -12,12 +12,12 @@ services:
 
 before_install:
   # Pull container
-  - 'docker pull ansible/centos7-ansible'
+  - 'docker pull geerlingguy/docker-${distro}-ansible:latest'
 
 script:
   - container_id=$(mktemp)
   # Run container in detached state.
-  - 'docker run --detach --volume="${PWD}":/etc/ansible/roles/role_under_test:ro ${run_opts} ansible/centos7-ansible "${init}" > "${container_id}"'
+  - 'docker run --detach --volume="${PWD}":/etc/ansible/roles/role_under_test:ro ${run_opts} geerlingguy/docker-${distro}-ansible:latest "${init}" > "${container_id}"'
 
   # Ansible syntax check.
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/tests/${playbook} --syntax-check'
@@ -26,7 +26,10 @@ script:
   - 'docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/role_under_test/tests/${playbook}'
 
 after_failure:
-  # Check check_oracle_health settings.
+  # Check MySQL settings.
+  # - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /var/log/mysql/error.log'
+  # - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /var/log/mysql.err'
+  # - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /var/log/mysql.log'
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
