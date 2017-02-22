@@ -12,7 +12,7 @@ services:
 
 before_install:
   # Pull container
-  - 'docker pull docker pull ansible/centos7-ansible'
+  - 'docker pull ansible/centos7-ansible'
 
 script:
   - container_id=$(mktemp)
