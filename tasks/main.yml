@@ -10,6 +10,10 @@
   with_items: "{{ check_oracle_health_env_oracle }}"
   when: not check_oracle_health_over_nrpe
 
+- name: reload bashrc
+  shell: source "{{ check_oracle_health_env_path }}"
+  when: not check_oracle_health_over_nrpe
+  
 - name: Fetch oracle_health script
   get_url:
     url: "{{ oracle_health_repo }}"
