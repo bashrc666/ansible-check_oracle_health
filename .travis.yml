@@ -6,7 +6,7 @@ env:
     init: /usr/lib/systemd/systemd
     run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
     playbook: test.yml
-
+    debug_ansible: -vvvv
 services:
   - docker
 
@@ -23,11 +23,11 @@ script:
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm yum install -y epel-release'
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm yum install -y nagios-plugins-all'
   # Test role.
-  - 'docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/ansible-check_oracle_health/tests/${playbook}'
+  - 'docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/ansible-check_oracle_health/tests/${playbook} ${debug_ansible}'
 
 after_failure:
   # Check ansible-check_oracle_health.
-  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /root/.cpanm/work/*/build.log'
+  # - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /root/.cpanm/work/*/build.log'
   # - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /var/log/mysql.err'
   # - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm cat /var/log/mysql.log'
 
