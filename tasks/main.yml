@@ -6,8 +6,8 @@
 - name: Add environement var [Check_oracle_health]
   lineinfile:
     dest: "{{ check_oracle_health_env_path }}"
-    line: "{{ item }}"
-  with_items: "{{ check_oracle_health_env_oracle }}"
+    line: "export {{ item.key }}={{ item.value }}"
+  with_dict: "{{ check_oracle_health_env_oracle }}"
   when: not check_oracle_health_over_nrpe
 
 - name: reload bashrc
@@ -53,6 +53,7 @@
   cpanm:
     name: DBD::Oracle
     system_lib: yes
+  environment: "{{ check_oracle_health_env_oracle }}"
   when: not oracle_perl_module.stat.exists
 
 - name: Running ./configure for "{{ oracle_health_name }}"

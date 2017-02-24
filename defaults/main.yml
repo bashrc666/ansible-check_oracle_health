@@ -8,8 +8,8 @@ nrpe_ssl_opt: ""
 check_oracle_health_system_group: nagios
 check_oracle_health_system_owner: nagios
 check_oracle_health_env_oracle:
-  - "export ORACLE_HOME=/usr/lib/oracle/12.1/client64/lib"
-  - "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/oracle/12.1/client64/lib/"
-  - "export PATH=$PATH:/usr/lib/oracle/12.1/client64/bin"
+  ORACLE_HOME: /usr/lib/oracle/12.1/client64/lib
+  LD_LIBRARY_PATH: /usr/lib/oracle/12.1/client64/lib/
+  PATH: /sbin:/bin:/usr/sbin:/usr/bin:/usr/lib/oracle/12.1/client64/bin
 check_oracle_health_over_nrpe: false
 check_oracle_health_env_path: /root/.bashrc
