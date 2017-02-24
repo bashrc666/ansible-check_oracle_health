@@ -2,11 +2,12 @@
 services: docker
 
 env:
-  - distro: centos6
+  - distro: centos7
     init: /usr/lib/systemd/systemd
     run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
     playbook: test.yml
     debug_ansible:
+
   - distro: centos6
     init: /sbin/init
     run_opts: ""
