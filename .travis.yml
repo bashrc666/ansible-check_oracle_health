@@ -8,10 +8,10 @@ env:
     playbook: test.yml
     debug_ansible:
 
-  - distro: centos6
-    init: /sbin/init
-    run_opts: ""
-    playbook: test.yml
+  #- distro: centos6
+   # init: /sbin/init
+   # run_opts: ""
+   # playbook: test.yml
 
 services:
   - docker
