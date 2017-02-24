@@ -36,7 +36,7 @@ script:
     || (echo 'Idempotence test: fail' && exit 1)
   # Make sure that check_oracle_health still working
   - >
-    sudo docker exec "$(cat ${container_id})"/usr/lib64/nagios/plugins/check_oracle_health
+    docker exec "$(cat ${container_id})" perl /usr/lib64/nagios/plugins/check_oracle_health
     && (echo 'check_oracle_health working' && exit 0)
     || (echo 'check_oracle_health not working' && exit 1)
 
