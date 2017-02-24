@@ -3,7 +3,7 @@
 Ansible-check_oracle_health
 =========
 
-This role is used to deploy the check_oracle_health script for nrpe monitoring
+This role is used to deploy the check_oracle_health script for local or nrpe monitoring
 
 Requirements
 ------------
@@ -25,9 +25,9 @@ nrpe_ssl_opt: ""
 check_oracle_health_system_group: nagios
 check_oracle_health_system_owner: nagios
 check_oracle_health_env_oracle:
-  - "export ORACLE_HOME=/usr/lib/oracle/12.1/client64/lib"
-  - "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/oracle/12.1/client64/lib/"
-  - "export PATH=$PATH:/usr/lib/oracle/12.1/client64/bin"
+  ORACLE_HOME: /usr/lib/oracle/12.1/client64/lib
+  LD_LIBRARY_PATH: /usr/lib/oracle/12.1/client64/lib/
+  PATH: /sbin:/bin:/usr/sbin:/usr/bin:/usr/lib/oracle/12.1/client64/bin
 # Provide check_oracle_health_over_nrpe to true if you want to install as a nrpe check
 check_oracle_health_over_nrpe: false
 check_oracle_health_env_path: /root/.bashrc
@@ -38,12 +38,12 @@ Dependencies
 
 Depence of wich case of install you want:
  - with nrpe on oracle server:
-  - add role nagios-nrpe-server
-  - set `check_oracle_health_over_nrpe: true`
-  - overide default vars to your case
+    - add role nagios-nrpe-server
+    - set `check_oracle_health_over_nrpe: true`
+    - overide default vars to your case
  
- - remote install:
-  - None
+ - remote or local install without nrpe:
+    - None
   
 
 Example Playbook

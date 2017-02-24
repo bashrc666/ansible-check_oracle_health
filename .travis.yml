@@ -26,5 +26,19 @@ script:
   # Running playbook
   - 'docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/ansible-check_oracle_health/tests/${playbook} ${debug_ansible}'
 
+  # Test role idempotence.
+  - idempotence=$(mktemp)
+  - docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/ansible-check_oracle_health/tests/${playbook} | tee -a ${idempotence}
+  - >
+    tail ${idempotence}
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+  # Make sure that check_oracle_health still working
+  - >
+    sudo docker exec "$(cat ${container_id})" /usr/lib64/nagios/plugins/check_oracle_health
+    && (echo 'check_oracle_health working' && exit 0)
+    || (echo 'check_oracle_health not working' && exit 1
+
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
