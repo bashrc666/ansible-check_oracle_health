@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/bashrc666/ansible-check_oracle_health.svg?branch=master)](https://travis-ci.org/bashrc666/ansible-check_oracle_health)
-
+[![Build Status](https://travis-ci.org/bashrc666/ansible-role-check_oracle_health.svg?branch=master)](https://travis-ci.org/bashrc666/ansible-role-check_oracle_health)
 Ansible-check_oracle_health
 =========
 
