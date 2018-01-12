@@ -1,5 +1,5 @@
 [Capensis-Oracle]
 name=Capensis Oracle rpm
-baseurl=https://repo.capensis.fr/pulp/repos/capensis-oracle/
+baseurl=https://repo.capen.sis/capensis_custom/capensis_oracle/
 enabled=1
 gpgcheck=0
