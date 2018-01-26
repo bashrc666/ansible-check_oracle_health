@@ -4,3 +4,4 @@
   roles:
     - ansible-check_oracle_health
   vars:
+    oracle_health_name: check_oracle_health-3.1.2
