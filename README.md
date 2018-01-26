@@ -18,7 +18,7 @@ Role Variables
 ```
 # defaults file for ansible-check_oracle_health
 nagios_nrpe_server_plugins_dir: /usr/lib64/nagios/plugins/
-oracle_health_name: check_oracle_health-3.0.1
+oracle_health_name: check_oracle_health-3.1.2
 oracle_health_repo: "https://labs.consol.de/assets/downloads/nagios/{{ oracle_health_name}}.tar.gz"
 oracle_env_path: /home/oracle/.profile
 nrpe_ssl_opt: ""
